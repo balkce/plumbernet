@@ -50,7 +50,7 @@ echo "Running plan_audio.py..."
 python3 "$steernet_dir/plan_audio.py" --speech "$steernet_dir/speech_meta.txt" --farfield "$steernet_dir/array_farfield_meta.txt" --count "$recording_num" > "$steernet_dir/array_audio_meta.txt"
 
 echo "To create array features, run:"
-echo "python3 features_steernet.py --steernet_basedir \"$steernet_dir\" --audio_meta array_audio_meta.txt --index_start 1 --index_stop $4 --output data_test_array-dir"
+echo "python3 features_steernet.py --steernet_basedir \"$(dirname $steernet_dir)\" --audio_meta array_audio_meta.txt --index_start 1 --index_stop $4 --output data_test_array-dir"
 
 echo "To create the features text file:"
 echo "find data_test_array -name \"*.wav\" > features_test_array.txt"
