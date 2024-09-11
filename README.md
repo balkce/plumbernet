@@ -143,10 +143,17 @@ find ${base_dir}/data/test  -name "*.wav" > ${base_dir}/features/features_test.t
 The model can be trained as follows (for instance with batch size of 16, using 16 workers/cores, for 10 epochs):
 
 ```
-python3 ml.py --dataset ${base_dir}/features/features_train.txt --batch_size 16 --action train --num_workers 16 --num_epochs 10 --checkpoint_save <checkpoint_bin_file>
+python3 ml.py --dataset ${base_dir}/features/features_train.txt --model ugru_2-256_2ch --batch_size 16 --action train --num_workers 16 --num_epochs 10 --checkpoint_save <checkpoint_bin_file>
 ```
 
 The trained parameters are saved in a binary file denoted by `<checkpoint_bin_file>`.
+
+Other models can be used other than the one shown. The naming convention is as follows: `AAAA_L-HHH_Cch`, where:
+
+- `AAAA` can be either `ugru` or `ulstm`, corresponding to using GRU or LSTM architectures respectively.
+- `L` is the number of layers, can be either 1 or 2.
+- `HHH` is the number of hidden units, can be 128, 256, or 512.
+- `C` is the number of input channels, can be either 1 or 2.
 
 ## Validation
 
@@ -158,10 +165,10 @@ python3 ml.py --dataset ${base_dir}/features/features_valid.txt --batch_size 16 
 
 ## Testing
 
-The model can be used to generate masks and save the results to png figures on the disk in the directory `<output_png_directory>`. Producing time-domain waveforms with and without the estimated mask will be done soon.
+The model can be used to generate masks and compare results between the beamforming stage and the final output stage.
 
 ```
-python3 ml.py --dataset ${base_dir}/features/features_test.txt --action test --checkpoint_load <checkpoint_bin_file> --output_dir <output_png_directory>
+python3 ml.py --dataset ${base_dir}/features/features_test.txt --model ugru_2-256_2ch --action improvement --checkpoint_load <checkpoint_bin_file>
 ```
 
 ## Using the included scripts
@@ -178,13 +185,7 @@ To train a model from scratch, with an evaluation at every given number of epoch
 bash script_traineval.sh ${base_dir} ${modelname}
 ```
 
-Where `${modelname}` is the name of the model to train. Valid choices are:
-```
-ugru_1-128_1ch, ugru_1-128_2ch, ugru_1-256_1ch, ugru_1-256_2ch, ugru_1-512_1ch, ugru_1-512_2ch,
-ugru_2-128_1ch, ugru_2-128_2ch, ugru_2-256_1ch, ugru_2-256_2ch, ugru_2-512_1ch, ugru_2-512_2ch,
-ulstm_1-128_1ch, ulstm_1-128_2ch, ulstm_1-256_1ch, ulstm_1-256_2ch, ulstm_1-512_1ch, ulstm_1-512_2ch,
-ulstm_2-128_1ch, ulstm_2-128_2ch, ulstm_2-256_1ch, ulstm_2-256_2ch, ulstm_2-512_1ch, ulstm_2-512_2ch
-```
+Where `${modelname}` is the name of the model to train.
 
 You are welcome to modify the following variables in `script_traineval.sh`: `num_workers` is the number of threads to use while training and evaluating, `batch_size` is the size of data points per batch, `num_epochs` is the total number of epochs to run (an epoch being running through all of the data points in `features_train.txt`), `num_epochs_eval` is the number of epochs to run after which an evaluation is carried out and a checkpoint is saved.
 
